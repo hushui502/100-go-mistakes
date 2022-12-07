@@ -2,6 +2,9 @@ package main
 
 import "errors"
 
+// if-else
+// switch
+// early return
 func join1(s1, s2 string, max int) (string, error) {
 	if s1 == "" {
 		return "", errors.New("s1 is empty")

@@ -8,10 +8,12 @@ import (
 func listing1() error {
 	var client *http.Client
 	if tracing {
+		// 因为err，所以这里需要用:=，但是这样就会导致这里的client其实是一个内部变量
 		client, err := createClientWithTracing()
 		if err != nil {
 			return err
 		}
+		// 如果没有这句，其实这里的内部变量client是会被提示unused
 		log.Println(client)
 	} else {
 		client, err := createDefaultClient()
@@ -21,6 +23,7 @@ func listing1() error {
 		log.Println(client)
 	}
 
+	// 没有被定义的client
 	_ = client
 	return nil
 }
@@ -32,6 +35,7 @@ func listing2() error {
 		if err != nil {
 			return err
 		}
+		// 这是一种方式，但是缺点是代码看起来很多余
 		client = c
 	} else {
 		c, err := createDefaultClient()
@@ -49,6 +53,8 @@ func listing3() error {
 	var client *http.Client
 	var err error
 	if tracing {
+		// 因为err在外部定义了，所以直接=，这种方式的最大缺点就是这个err的范围太大了
+		// 如果是顺序代码，我建议还是用err1，err2这类的方式（listing2）
 		client, err = createClientWithTracing()
 		if err != nil {
 			return err
@@ -72,6 +78,7 @@ func listing4() error {
 	} else {
 		client, err = createDefaultClient()
 	}
+	// 因为这里的err只会走一个分支，所以不需要每个分支都err handling
 	if err != nil {
 		return err
 	}
